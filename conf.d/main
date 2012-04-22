@@ -18,12 +18,18 @@ chown www-data:www-data $WEBROOT/config
 chown www-data:www-data $WEBROOT/upload
 chown www-data:www-data $WEBROOT/download
 chown www-data:www-data $WEBROOT/tools/smarty/compile
+chown www-data:www-data $WEBROOT/tools/smarty/cache
+chown www-data:www-data $WEBROOT/tools/smarty_v2/compile
+chown www-data:www-data $WEBROOT/tools/smarty_v2/cache
 chown www-data:www-data $WEBROOT/sitemap.xml
+chown www-data:www-data $WEBROOT/log
 
+chown -R www-data:www-data $WEBROOT/cache
 chown -R www-data:www-data $WEBROOT/img
 chown -R www-data:www-data $WEBROOT/mails
 chown -R www-data:www-data $WEBROOT/modules
 chown -R www-data:www-data $WEBROOT/themes/prestashop/lang
+chown -R www-data:www-data $WEBROOT/themes/prestashop/cache
 chown -R www-data:www-data $WEBROOT/translations
 
 # convenience execution variables
@@ -50,17 +56,18 @@ a2enmod rewrite
 URL="http://127.0.0.1/install/model.php"
 CURL="curl -c /tmp/cookie -b /tmp/cookie"
 
-$CURL "$URL?method=checkConfig"
-$CURL "$URL?_=123456789123&method=createDB&tablePrefix=&mode=full&type=MySQL&server=localhost&login=$DB_USER&password=$DB_PASS&name=$DB_NAME"
-$CURL "$URL?_=123456789123&method=checkShopInfos&isoCode=en&infosCountry=21&infosShop=TurnKey%20PrestaShop&infosFirstname=Presta&infosName=Admin&infosEmail=$ADMIN_MAIL&infosPassword=$ADMIN_PASS&infosPasswordRepeat=$ADMIN_PASS&infosNotification=off&infosMailMethod=smtp&smtpSrv=127.0.0.1&smtpLogin=&smtpPassword=&smtpPort=25&smtpEnc=off&mailSubject=&isoCodeLocalLanguage=en"
+$CURL "$URL?method=checkConfig&firsttime=1"
+$CURL "$URL?_=1234567890123&method=createDB&tablePrefix=&mode=full&type=MySQL&server=localhost&login=$DB_USER&password=$DB_PASS&engine=MyISAM&name=$DB_NAME&language=0"
+$CURL "$URL?_=1234567890123&method=checkShopInfos&isoCode=en&infosActivity=0&infosCountry=21&infosTimezone=US%2FEastern&infosShop=TurnKey%20PrestaShop&infosFirstname=Presta&infosName=Admin&infosEmail=$ADMIN_MAIL&infosPassword=$ADMIN_PASS&infosPasswordRepeat=$ADMIN_PASS&infosNotification=off&countryName=US&infosWL=en&infosDL=en&catalogMode=0&infosMailMethod=smtp&smtpSrv=127.0.0.1&smtpLogin=&smtpPassword=&smtpPort=25&smtpEnc=off&mailSubject=&isoCodeLocalLanguage=en"
 
 rm -rf $WEBROOT/install
 mv $WEBROOT/admin $WEBROOT/administration
 
-# enable friendly urls
-mv /usr/local/src/presta_htaccess $WEBROOT/.htaccess
-mv /usr/local/src/presta_robots $WEBROOT/robots.txt
-$MYSQL_BATCH --execute "USE $DB_NAME; UPDATE configuration SET value = '1' WHERE name = 'PS_REWRITING_SETTINGS';"
+# required for friendly urls
+touch $WEBROOT/.htaccess
+touch $WEBROOT/robots.txt
+chown www-data:www-data $WEBROOT/.htaccess
+chown www-data:www-data $WEBROOT/robots.txt
 
 # enable ssl
 $MYSQL_BATCH --execute "USE $DB_NAME; UPDATE configuration SET value = '1' WHERE name = 'PS_SSL_ENABLED';"
