@@ -1,0 +1,70 @@
+#!/bin/bash -ex
+
+ADMIN_MAIL=admin@example.com
+ADMIN_PASS=turnkey1
+
+DB_NAME=prestashop
+DB_USER=prestashop
+DB_PASS=$(mcookie)
+
+WEBROOT=/var/www/prestashop
+
+# unpack tarball to webroot and set permissions
+unzip /usr/local/src/prestashop*.zip -d /var/www/
+rm -f /usr/local/src/prestashop*.zip
+
+chown -R root:root $WEBROOT
+chown www-data:www-data $WEBROOT/config
+chown www-data:www-data $WEBROOT/upload
+chown www-data:www-data $WEBROOT/download
+chown www-data:www-data $WEBROOT/tools/smarty/compile
+chown www-data:www-data $WEBROOT/sitemap.xml
+
+chown -R www-data:www-data $WEBROOT/img
+chown -R www-data:www-data $WEBROOT/mails
+chown -R www-data:www-data $WEBROOT/modules
+chown -R www-data:www-data $WEBROOT/themes/prestashop/lang
+chown -R www-data:www-data $WEBROOT/translations
+
+# convenience execution variables
+MYSQL_BATCH="mysql --user=root --password=$MYSQL_PASS --batch"
+MYSQL_ADMIN="mysqladmin --user=root --password=$MYSQL_PASS"
+
+# start mysql server
+/etc/init.d/mysql start
+
+# create database
+$MYSQL_ADMIN create $DB_NAME
+
+# create database user with privileges on the database
+$MYSQL_BATCH --execute "grant all privileges on $DB_NAME.* to $DB_USER@localhost identified by '$DB_PASS'; flush privileges;"
+
+# update apache configuration
+a2dissite default
+a2ensite prestashop
+a2enmod rewrite
+
+# prestashop configuration
+/etc/init.d/apache2 start
+
+URL="http://127.0.0.1/install/model.php"
+CURL="curl -c /tmp/cookie -b /tmp/cookie"
+
+$CURL "$URL?method=checkConfig"
+$CURL "$URL?_=123456789123&method=createDB&tablePrefix=&mode=full&type=MySQL&server=localhost&login=$DB_USER&password=$DB_PASS&name=$DB_NAME"
+$CURL "$URL?_=123456789123&method=checkShopInfos&isoCode=en&infosCountry=21&infosShop=TurnKey%20PrestaShop&infosFirstname=Presta&infosName=Admin&infosEmail=$ADMIN_MAIL&infosPassword=$ADMIN_PASS&infosPasswordRepeat=$ADMIN_PASS&infosNotification=off&infosMailMethod=smtp&smtpSrv=127.0.0.1&smtpLogin=&smtpPassword=&smtpPort=25&smtpEnc=off&mailSubject=&isoCodeLocalLanguage=en"
+
+rm -rf $WEBROOT/install
+mv $WEBROOT/admin $WEBROOT/administration
+
+# enable friendly urls
+mv /usr/local/src/presta_htaccess $WEBROOT/.htaccess
+mv /usr/local/src/presta_robots $WEBROOT/robots.txt
+$MYSQL_BATCH --execute "USE $DB_NAME; UPDATE configuration SET value = '1' WHERE name = 'PS_REWRITING_SETTINGS';"
+
+# enable ssl
+$MYSQL_BATCH --execute "USE $DB_NAME; UPDATE configuration SET value = '1' WHERE name = 'PS_SSL_ENABLED';"
+
+# stop services
+/etc/init.d/apache2 stop
+/etc/init.d/mysql stop
