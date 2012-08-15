@@ -1,9 +1,11 @@
 #!/usr/bin/python
-"""Set PrestaShop admin password and email
+"""Set PrestaShop admin password, email and domain to serve
 
 Option:
     --pass=     unless provided, will ask interactively
     --email=    unless provided, will ask interactively
+    --domain=   unless provided, will ask interactively
+                DEFAULT=www.example.com
 
 """
 import re
@@ -21,15 +23,18 @@ def usage(s=None):
     print >> sys.stderr, __doc__
     sys.exit(1)
 
+DEFAULT_DOMAIN="www.example.com"
+
 def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
-                                       ['help', 'pass=', 'email='])
+                                       ['help', 'pass=', 'email=', 'domain='])
     except getopt.GetoptError, e:
         usage(e)
 
-    password = ""
     email = ""
+    domain = ""
+    password = ""
     for opt, val in opts:
         if opt in ('-h', '--help'):
             usage()
@@ -37,6 +42,8 @@ def main():
             password = val
         elif opt == '--email':
             email = val
+        elif opt == '--domain':
+            domain = val
 
     if not email:
         d = Dialog('TurnKey Linux - First boot configuration')
@@ -54,6 +61,18 @@ def main():
             "Enter new password for the PrestaShop '%s' account." % email,
             min_length=5)
 
+    if not domain:
+        if 'd' not in locals():
+            d = Dialog('TurnKey Linux - First boot configuration')
+
+        domain = d.get_input(
+            "PrestaShop Domain",
+            "Enter the domain to serve Prestashop.",
+            DEFAULT_DOMAIN)
+
+    if domain == "DEFAULT":
+        domain = DEFAULT_DOMAIN
+
     for line in file('/var/www/prestashop/config/settings.inc.php').readlines():
         m = re.match("define\('_COOKIE_KEY_', '(.*)'", line.strip())
         if m:
@@ -64,6 +83,9 @@ def main():
     m = MySQL()
     m.execute('UPDATE prestashop.employee SET email=\"%s\" WHERE id_employee=\"1\";' % email)
     m.execute('UPDATE prestashop.employee SET passwd=\"%s\" WHERE id_employee=\"1\";' % hashpass)
+    m.execute('UPDATE prestashop.configuration SET value=\"%s\" WHERE name=\"PS_SHOP_DOMAIN\";' % domain)
+    m.execute('UPDATE prestashop.configuration SET value=\"%s\" WHERE name=\"PS_SHOP_DOMAIN_SSL\";' % domain)
+
 
 if __name__ == "__main__":
     main()

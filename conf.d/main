@@ -2,6 +2,7 @@
 
 ADMIN_MAIL=admin@example.com
 ADMIN_PASS=turnkey1
+DOMAIN=www.example.com # set via inithook
 
 DB_NAME=prestashop
 DB_USER=prestashop

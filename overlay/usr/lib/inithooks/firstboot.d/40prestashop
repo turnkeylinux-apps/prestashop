@@ -1,8 +1,8 @@
 #!/bin/bash -e
-# set prestashop admin password and email
+# set prestashop admin password, email and domain
 
 . /etc/default/inithooks
 
 [ -e $INITHOOKS_CONF ] && . $INITHOOKS_CONF
-$INITHOOKS_PATH/bin/prestashop.py --pass="$APP_PASS" --email="$APP_EMAIL"
+$INITHOOKS_PATH/bin/prestashop.py --pass="$APP_PASS" --email="$APP_EMAIL" --domain="$APP_DOMAIN"
 

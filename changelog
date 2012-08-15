@@ -1,6 +1,9 @@
 turnkey-prestashop-12.0 (1) turnkey; urgency=low
 
-  * PrestaShop: Upgraded to latest upstream archive.
+  * PrestaShop
+
+    - Upgraded to latest upstream archive.
+    - Updated firstboot script to set domain as required in new version.
 
   * Major component versions
 
