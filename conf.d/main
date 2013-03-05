@@ -11,17 +11,13 @@ DB_PASS=$(mcookie)
 WEBROOT=/var/www/prestashop
 
 # unpack tarball to webroot and set permissions
-unzip /usr/local/src/prestashop*.zip -d /var/www/
-rm -f /usr/local/src/prestashop*.zip
+unzip -q /usr/local/src/prestashop.zip -d /var/www/
+rm -f /usr/local/src/prestashop.zip
 
 chown -R root:root $WEBROOT
 chown www-data:www-data $WEBROOT/config
 chown www-data:www-data $WEBROOT/upload
 chown www-data:www-data $WEBROOT/download
-chown www-data:www-data $WEBROOT/tools/smarty/compile
-chown www-data:www-data $WEBROOT/tools/smarty/cache
-chown www-data:www-data $WEBROOT/tools/smarty_v2/compile
-chown www-data:www-data $WEBROOT/tools/smarty_v2/cache
 chown www-data:www-data $WEBROOT/sitemap.xml
 chown www-data:www-data $WEBROOT/log
 
@@ -29,8 +25,8 @@ chown -R www-data:www-data $WEBROOT/cache
 chown -R www-data:www-data $WEBROOT/img
 chown -R www-data:www-data $WEBROOT/mails
 chown -R www-data:www-data $WEBROOT/modules
-chown -R www-data:www-data $WEBROOT/themes/prestashop/lang
-chown -R www-data:www-data $WEBROOT/themes/prestashop/cache
+chown -R www-data:www-data $WEBROOT/themes/default/lang
+chown -R www-data:www-data $WEBROOT/themes/default/cache
 chown -R www-data:www-data $WEBROOT/translations
 
 # convenience execution variables
@@ -51,15 +47,37 @@ a2dissite default
 a2ensite prestashop
 a2enmod rewrite
 
-# prestashop configuration
+# prestashop installation and configuration
 /etc/init.d/apache2 start
 
-URL="http://127.0.0.1/install/model.php"
+URL="http://127.0.0.1/install/index.php"
 CURL="curl -c /tmp/cookie -b /tmp/cookie"
+EMAIL=$(echo $ADMIN_MAIL | sed s/@/%40/)
 
-$CURL "$URL?method=checkConfig&firsttime=1"
-$CURL "$URL?_=1234567890123&method=createDB&tablePrefix=&mode=full&type=MySQL&server=localhost&login=$DB_USER&password=$DB_PASS&engine=MyISAM&name=$DB_NAME&language=0"
-$CURL "$URL?_=1234567890123&method=checkShopInfos&isoCode=en&infosActivity=0&infosCountry=21&infosTimezone=US%2FEastern&infosShop=TurnKey%20PrestaShop&infosFirstname=Presta&infosName=Admin&infosEmail=$ADMIN_MAIL&infosPassword=$ADMIN_PASS&infosPasswordRepeat=$ADMIN_PASS&infosNotification=off&countryName=US&infosWL=en&infosDL=en&catalogMode=0&infosMailMethod=smtp&smtpSrv=127.0.0.1&smtpLogin=&smtpPassword=&smtpPort=25&smtpEnc=off&mailSubject=&isoCodeLocalLanguage=en"
+$CURL $URL --data "language=en&licence_agrement=1&submitNext=Next"
+$CURL $URL --data "submitNext=Next"
+$CURL $URL --data "dbServer=localhost&dbName=$DB_NAME&dbLogin=$DB_USER&dbPassword=$DB_PASS&dbEngine=InnoDB&db_prefix=&smtpChecked=on&smtpSrv=127.0.0.1&smtpEnc=off&smtpPort=25&smtpLogin=&smtpPassword=&submitNext=Next"
+$CURL $URL --data "shop_name=TurnKey+PrestaShop&shop_activity=0&db_mode=full&shop_country=us&shop_timezone=US%2FEastern&fileToUpload=&admin_firstname=Presta&admin_lastname=Admin&admin_email=$EMAIL&admin_password=$ADMIN_PASS&admin_password_confirm=$ADMIN_PASS&submitNext=Next"
+
+$CURL "${URL}?generateSettingsFile=true"
+$CURL "${URL}?installDatabase=true"
+$CURL "${URL}?installDefaultData=true"
+
+for entity in cms_category cms meta operating_system carrier carrier_tax_rules_group_shop zone country address_format group category category_group image_type quick_access tab gender stock_mvt_reason search_engine hook warehouse profile access theme configuration carrier_zone risk order_state supply_order_state timezone state web_browser delivery order_return_state hook_alias contact carrier_group; do
+    $CURL "${URL}?populateDatabase=true&entity=$entity"
+done
+
+$CURL "${URL}?configureShop=true"
+
+for module in bankwire blockadvertising blockbestsellers blockcart blockcategories blockcms blockcontact blockcontactinfos blockcurrencies blockcustomerprivacy blocklanguages blockmanufacturer blockmyaccount blockmyaccountfooter blocknewproducts blocknewsletter blockpaymentlogo blockpermanentlinks blockreinsurance blocksearch blocksharefb blocksocial blockspecials blockstore blocksupplier blocktags blocktopmenu blockuserinfo blockviewed cheque favoriteproducts feeder graphartichow graphgooglechart graphvisifire graphxmlswfcharts gridhtml gsitemap homefeatured homeslider moneybookers pagesnotfound sekeywords statsbestcategories statsbestcustomers statsbestproducts statsbestsuppliers statsbestvouchers statscarrier statscatalog statscheckup statsdata statsequipment statsforecast statslive statsnewsletter statsorigin statspersonalinfos statsproduct statsregistrations statssales statssearch statsstock statsvisits themeinstallator; do
+    $CURL "${URL}?installModules=true&module=$module"
+done
+
+for entity in supplier manufacturer category product scene customer guest carrier carrier_tax_rules_group_shop address cart orders feature feature_value category_group product_attribute cart_product tag category_product attribute_group attribute order_detail order_carrier alias range_weight profile access image specific_price product_attribute_combination product_attribute_image carrier_zone stock_available store order_message range_price delivery connections product_supplier order_history carrier_group; do
+    $CURL "${URL}?installFixtures=true&entity=$entity"
+done
+
+$CURL "${URL}?installTheme=true"
 
 rm -rf $WEBROOT/install
 mv $WEBROOT/admin $WEBROOT/administration
@@ -76,3 +94,4 @@ $MYSQL_BATCH --execute "USE $DB_NAME; UPDATE configuration SET value = '1' WHERE
 # stop services
 /etc/init.d/apache2 stop
 /etc/init.d/mysql stop
+

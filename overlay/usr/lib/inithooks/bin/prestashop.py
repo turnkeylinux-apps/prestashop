@@ -51,7 +51,7 @@ def main():
             "PrestaShop Email",
             "Enter email address for the PrestaShop 'admin' account.",
             "admin@example.com")
-    
+
     if not password:
         if 'd' not in locals():
             d = Dialog('TurnKey Linux - First boot configuration')
@@ -85,6 +85,9 @@ def main():
     m.execute('UPDATE prestashop.employee SET passwd=\"%s\" WHERE id_employee=\"1\";' % hashpass)
     m.execute('UPDATE prestashop.configuration SET value=\"%s\" WHERE name=\"PS_SHOP_DOMAIN\";' % domain)
     m.execute('UPDATE prestashop.configuration SET value=\"%s\" WHERE name=\"PS_SHOP_DOMAIN_SSL\";' % domain)
+    m.execute('UPDATE prestashop.shop_url SET domain=\"%s\" WHERE id_shop_url=\"1\";' % domain)
+    m.execute('UPDATE prestashop.shop_url SET domain_ssl=\"%s\" WHERE id_shop_url=\"1\";' % domain)
+
 
 
 if __name__ == "__main__":
