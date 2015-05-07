@@ -81,12 +81,12 @@ def main():
     hashpass = hashlib.md5(cookie_key + password).hexdigest()
 
     m = MySQL()
-    m.execute('UPDATE prestashop.employee SET email=\"%s\" WHERE id_employee=\"1\";' % email)
-    m.execute('UPDATE prestashop.employee SET passwd=\"%s\" WHERE id_employee=\"1\";' % hashpass)
-    m.execute('UPDATE prestashop.configuration SET value=\"%s\" WHERE name=\"PS_SHOP_DOMAIN\";' % domain)
-    m.execute('UPDATE prestashop.configuration SET value=\"%s\" WHERE name=\"PS_SHOP_DOMAIN_SSL\";' % domain)
-    m.execute('UPDATE prestashop.shop_url SET domain=\"%s\" WHERE id_shop_url=\"1\";' % domain)
-    m.execute('UPDATE prestashop.shop_url SET domain_ssl=\"%s\" WHERE id_shop_url=\"1\";' % domain)
+    m.execute('UPDATE prestashop.ps_employee SET email=\"%s\" WHERE id_employee=\"1\";' % email)
+    m.execute('UPDATE prestashop.ps_employee SET passwd=\"%s\" WHERE id_employee=\"1\";' % hashpass)
+    m.execute('UPDATE prestashop.ps_configuration SET value=\"%s\" WHERE name=\"PS_SHOP_DOMAIN\";' % domain)
+    m.execute('UPDATE prestashop.ps_configuration SET value=\"%s\" WHERE name=\"PS_SHOP_DOMAIN_SSL\";' % domain)
+    m.execute('UPDATE prestashop.ps_shop_url SET domain=\"%s\" WHERE id_shop_url=\"1\";' % domain)
+    m.execute('UPDATE prestashop.ps_shop_url SET domain_ssl=\"%s\" WHERE id_shop_url=\"1\";' % domain)
 
 
 
