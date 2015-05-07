@@ -59,7 +59,7 @@ def main():
         password = d.get_password(
             "PrestaShop Password",
             "Enter new password for the PrestaShop '%s' account." % email,
-            min_length=5)
+            min_length=8)
 
     if not domain:
         if 'd' not in locals():
