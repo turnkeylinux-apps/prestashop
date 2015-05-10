@@ -25,8 +25,9 @@ chown -R www-data:www-data $WEBROOT/cache
 chown -R www-data:www-data $WEBROOT/img
 chown -R www-data:www-data $WEBROOT/mails
 chown -R www-data:www-data $WEBROOT/modules
-chown -R www-data:www-data $WEBROOT/themes/default/lang
-chown -R www-data:www-data $WEBROOT/themes/default/cache
+chown -R www-data:www-data $WEBROOT/themes/default-bootstrap/lang
+chown -R www-data:www-data $WEBROOT/themes/default-bootstrap/cache
+chown -R www-data:www-data $WEBROOT/themes/default-bootstrap/pdf/lang
 chown -R www-data:www-data $WEBROOT/translations
 
 # convenience execution variables
@@ -50,34 +51,7 @@ a2enmod rewrite
 # prestashop installation and configuration
 /etc/init.d/apache2 start
 
-URL="http://127.0.0.1/install/index.php"
-CURL="curl -c /tmp/cookie -b /tmp/cookie"
-EMAIL=$(echo $ADMIN_MAIL | sed s/@/%40/)
-
-$CURL $URL --data "language=en&licence_agrement=1&submitNext=Next"
-$CURL $URL --data "submitNext=Next"
-$CURL $URL --data "dbServer=localhost&dbName=$DB_NAME&dbLogin=$DB_USER&dbPassword=$DB_PASS&dbEngine=InnoDB&db_prefix=&smtpChecked=on&smtpSrv=127.0.0.1&smtpEnc=off&smtpPort=25&smtpLogin=&smtpPassword=&submitNext=Next"
-$CURL $URL --data "shop_name=TurnKey+PrestaShop&shop_activity=0&db_mode=full&shop_country=us&shop_timezone=US%2FEastern&fileToUpload=&admin_firstname=Presta&admin_lastname=Admin&admin_email=$EMAIL&admin_password=$ADMIN_PASS&admin_password_confirm=$ADMIN_PASS&submitNext=Next"
-
-$CURL "${URL}?generateSettingsFile=true"
-$CURL "${URL}?installDatabase=true"
-$CURL "${URL}?installDefaultData=true"
-
-for entity in cms_category cms meta operating_system carrier carrier_tax_rules_group_shop zone country address_format group category category_group image_type quick_access tab gender stock_mvt_reason search_engine hook warehouse profile access theme configuration carrier_zone risk order_state supply_order_state timezone state web_browser delivery order_return_state hook_alias contact carrier_group; do
-    $CURL "${URL}?populateDatabase=true&entity=$entity"
-done
-
-$CURL "${URL}?configureShop=true"
-
-for module in bankwire blockadvertising blockbestsellers blockcart blockcategories blockcms blockcontact blockcontactinfos blockcurrencies blockcustomerprivacy blocklanguages blockmanufacturer blockmyaccount blockmyaccountfooter blocknewproducts blocknewsletter blockpaymentlogo blockpermanentlinks blockreinsurance blocksearch blocksharefb blocksocial blockspecials blockstore blocksupplier blocktags blocktopmenu blockuserinfo blockviewed cheque favoriteproducts feeder graphartichow graphgooglechart graphvisifire graphxmlswfcharts gridhtml gsitemap homefeatured homeslider moneybookers pagesnotfound sekeywords statsbestcategories statsbestcustomers statsbestproducts statsbestsuppliers statsbestvouchers statscarrier statscatalog statscheckup statsdata statsequipment statsforecast statslive statsnewsletter statsorigin statspersonalinfos statsproduct statsregistrations statssales statssearch statsstock statsvisits themeinstallator; do
-    $CURL "${URL}?installModules=true&module=$module"
-done
-
-for entity in supplier manufacturer category product scene customer guest carrier carrier_tax_rules_group_shop address cart orders feature feature_value category_group product_attribute cart_product tag category_product attribute_group attribute order_detail order_carrier alias range_weight profile access image specific_price product_attribute_combination product_attribute_image carrier_zone stock_available store order_message range_price delivery connections product_supplier order_history carrier_group; do
-    $CURL "${URL}?installFixtures=true&entity=$entity"
-done
-
-$CURL "${URL}?installTheme=true"
+php $WEBROOT/install/index_cli.php --timezone="US/Eastern" --domain="$DOMAIN" --db_user="$DB_USER" --db_password="$DB_PASS" --prefix="" --name="TurnKey PrestaShop" --country="us" --firstname="Presta" --lastname="Admin" --password="$ADMIN_PASS" --email="$ADMIN_MAIL" --newsletter=0 --send_email=0
 
 rm -rf $WEBROOT/install
 mv $WEBROOT/admin $WEBROOT/administration
@@ -89,7 +63,7 @@ chown www-data:www-data $WEBROOT/.htaccess
 chown www-data:www-data $WEBROOT/robots.txt
 
 # enable ssl
-$MYSQL_BATCH --execute "USE $DB_NAME; UPDATE configuration SET value = '1' WHERE name = 'PS_SSL_ENABLED';"
+$MYSQL_BATCH --execute "UPDATE $DB_NAME.ps_configuration SET value = '1' WHERE name = 'PS_SSL_ENABLED';"
 
 # stop services
 /etc/init.d/apache2 stop
