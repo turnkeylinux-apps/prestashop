@@ -23,7 +23,6 @@ chown www-data:www-data $WEBROOT/upload
 chown www-data:www-data $WEBROOT/download
 chown www-data:www-data $WEBROOT/log
 
-#chown -R www-data:www-data $WEBROOT/
 chown -R www-data:www-data $WEBROOT/cache
 chown -R www-data:www-data $WEBROOT/img
 chown -R www-data:www-data $WEBROOT/mails
