@@ -10,6 +10,9 @@ DB_PASS=$(mcookie)
 
 WEBROOT=/var/www/prestashop
 
+# disable xcache (causes apache segfault)
+rm /etc/php5/*/conf.d/*xcache.ini
+
 # unpack tarball to webroot and set permissions
 unzip -q /usr/local/src/prestashop.zip -d /var/www/
 rm -f /usr/local/src/prestashop.zip
@@ -18,16 +21,13 @@ chown -R root:root $WEBROOT
 chown www-data:www-data $WEBROOT/config
 chown www-data:www-data $WEBROOT/upload
 chown www-data:www-data $WEBROOT/download
-chown www-data:www-data $WEBROOT/sitemap.xml
 chown www-data:www-data $WEBROOT/log
 
 chown -R www-data:www-data $WEBROOT/cache
 chown -R www-data:www-data $WEBROOT/img
 chown -R www-data:www-data $WEBROOT/mails
 chown -R www-data:www-data $WEBROOT/modules
-chown -R www-data:www-data $WEBROOT/themes/default-bootstrap/lang
-chown -R www-data:www-data $WEBROOT/themes/default-bootstrap/cache
-chown -R www-data:www-data $WEBROOT/themes/default-bootstrap/pdf/lang
+chown -R www-data:www-data $WEBROOT/themes/default-bootstrap
 chown -R www-data:www-data $WEBROOT/translations
 
 # convenience execution variables

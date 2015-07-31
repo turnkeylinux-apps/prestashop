@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-VERSION="1.6.0.14"
+VERSION="1.6.1.0"
 URL="http://www.prestashop.com/download/old/prestashop_${VERSION}.zip"
 
 [ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
