@@ -12,6 +12,7 @@ import re
 import sys
 import getopt
 import inithooks_cache
+
 import hashlib
 
 from dialog_wrapper import Dialog
@@ -75,6 +76,8 @@ def main():
 
     if domain == "DEFAULT":
         domain = DEFAULT_DOMAIN
+
+    inithooks_cache.write('APP_DOMAIN', domain)
 
     for line in file('/var/www/prestashop/config/settings.inc.php').readlines():
         m = re.match("define\('_COOKIE_KEY_', '(.*)'", line.strip())
