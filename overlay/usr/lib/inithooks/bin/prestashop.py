@@ -11,6 +11,8 @@ Option:
 import re
 import sys
 import getopt
+import inithooks_cache
+
 import hashlib
 
 from dialog_wrapper import Dialog
@@ -52,6 +54,8 @@ def main():
             "Enter email address for the PrestaShop 'admin' account.",
             "admin@example.com")
 
+    inithooks_cache.write('APP_EMAIL', email)
+
     if not password:
         if 'd' not in locals():
             d = Dialog('TurnKey Linux - First boot configuration')
@@ -72,6 +76,8 @@ def main():
 
     if domain == "DEFAULT":
         domain = DEFAULT_DOMAIN
+
+    inithooks_cache.write('APP_DOMAIN', domain)
 
     for line in file('/var/www/prestashop/config/settings.inc.php').readlines():
         m = re.match("define\('_COOKIE_KEY_', '(.*)'", line.strip())
