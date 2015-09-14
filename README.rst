@@ -30,5 +30,5 @@ Credentials *(passwords set at first boot)*
 
 
 .. _PrestaShop: http://www.prestashop.com/
-.. _TurnKey Core: http://www.turnkeylinux.org/core
+.. _TurnKey Core: https://www.turnkeylinux.org/core
 .. _Adminer: http://www.adminer.org/
