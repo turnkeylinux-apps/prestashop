@@ -10,9 +10,6 @@ DB_PASS=$(mcookie)
 
 WEBROOT=/var/www/prestashop
 
-# disable xcache (causes apache segfault)
-rm /etc/php5/*/conf.d/*xcache.ini
-
 # unpack tarball to webroot and set permissions
 unzip -q /usr/local/src/prestashop.zip -d /var/www/
 rm -f /usr/local/src/prestashop.zip
