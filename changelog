@@ -1,3 +1,16 @@
+turnkey-prestashop-14.2 (1) turnkey; urgency=low
+
+  * Updated Prestashop to lastest upstream (v1.7.1.1).
+
+  * Updated Adminer to 4.2.5.
+
+  * Installed security updates.
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Mon, 15 May 2017 14:54:40 +1000
+
 turnkey-prestashop-14.1 (1) turnkey; urgency=low
 
   * Installed security updates.
