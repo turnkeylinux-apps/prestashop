@@ -1,3 +1,14 @@
+turnkey-prestashop-14.2 (1) turnkey; urgency=low
+
+  * Installed security updates.
+
+  * Upgraded to the latest upstream version of PrestaShop (1.7.0.6).
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Anton Pyrogovskyi <anton@turnkeylinux.org>  Mon, 15 May 2017 08:02:40 +0200
+
 turnkey-prestashop-14.1 (1) turnkey; urgency=low
 
   * Installed security updates.

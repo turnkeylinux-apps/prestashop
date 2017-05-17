@@ -79,8 +79,8 @@ def main():
 
     inithooks_cache.write('APP_DOMAIN', domain)
 
-    for line in file('/var/www/prestashop/config/settings.inc.php').readlines():
-        m = re.match("define\('_COOKIE_KEY_', '(.*)'", line.strip())
+    for line in file('/var/www/prestashop/app/config/parameters.php').readlines():
+        m = re.match(" *'cookie_key' => '(.*)',", line.strip())
         if m:
             cookie_key = m.group(1)
 
