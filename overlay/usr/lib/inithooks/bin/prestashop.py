@@ -13,7 +13,7 @@ import sys
 import getopt
 import inithooks_cache
 
-import hashlib
+import bcrypt
 
 from dialog_wrapper import Dialog
 from mysqlconf import MySQL
@@ -84,7 +84,7 @@ def main():
         if m:
             cookie_key = m.group(1)
 
-    hashpass = hashlib.md5(cookie_key + password).hexdigest()
+    hashpass = bcrypt.hashpw(password, bcrypt.gensalt())
 
     m = MySQL()
     m.execute('UPDATE prestashop.ps_employee SET email=\"%s\" WHERE id_employee=\"1\";' % email)
