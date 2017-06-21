@@ -4,3 +4,6 @@
 php5-gd
 php5-mcrypt
 php5-curl
+php5-intl
+
+python-bcrypt

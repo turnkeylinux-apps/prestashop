@@ -28,6 +28,10 @@ chown -R www-data:www-data $WEBROOT/mails
 chown -R www-data:www-data $WEBROOT/modules
 chown -R www-data:www-data $WEBROOT/themes
 chown -R www-data:www-data $WEBROOT/translations
+chown -R www-data:www-data $WEBROOT/config/xml
+
+# required for installer
+chown -R www-data:www-data $WEBROOT/app
 
 # convenience execution variables
 MYSQL_BATCH="mysql --user=root --password=$MYSQL_PASS --batch"
@@ -50,7 +54,7 @@ a2enmod rewrite
 # prestashop installation and configuration
 /etc/init.d/apache2 start
 
-php $WEBROOT/install/index_cli.php --timezone="US/Eastern" --domain="$DOMAIN" --db_user="$DB_USER" --db_password="$DB_PASS" --prefix="" --name="TurnKey PrestaShop" --country="us" --firstname="Presta" --lastname="Admin" --password="$ADMIN_PASS" --email="$ADMIN_MAIL" --newsletter=0 --send_email=0
+su -p -s '/bin/sh' -c "php $WEBROOT/install/index_cli.php --timezone='US/Eastern' --domain='$DOMAIN' --db_user='$DB_USER' --db_password='$DB_PASS' --prefix='' --name='TurnKey PrestaShop' --country='us' --firstname='Presta' --lastname='Admin' --password='$ADMIN_PASS' --email='$ADMIN_MAIL' --newsletter=0 --send_email=0" www-data
 
 rm -rf $WEBROOT/install
 mv $WEBROOT/admin $WEBROOT/administration
@@ -67,4 +71,8 @@ $MYSQL_BATCH --execute "UPDATE $DB_NAME.ps_configuration SET value = '1' WHERE n
 # stop services
 /etc/init.d/apache2 stop
 /etc/init.d/mysql stop
+
+# cleanup
+chown -R root:root $WEBROOT/app
+chown -R www-data:www-data $WEBROOT/app/cache
 
