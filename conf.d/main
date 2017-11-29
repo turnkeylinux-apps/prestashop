@@ -38,7 +38,7 @@ MYSQL_BATCH="mysql --user=root --password=$MYSQL_PASS --batch"
 MYSQL_ADMIN="mysqladmin --user=root --password=$MYSQL_PASS"
 
 # start mysql server
-/etc/init.d/mysql start
+service mysql start
 
 # create database
 $MYSQL_ADMIN create $DB_NAME
@@ -52,7 +52,7 @@ a2ensite prestashop
 a2enmod rewrite
 
 # prestashop installation and configuration
-/etc/init.d/apache2 start
+service apache2 start
 
 su -p -s '/bin/sh' -c "php $WEBROOT/install/index_cli.php --timezone='US/Eastern' --domain='$DOMAIN' --db_user='$DB_USER' --db_password='$DB_PASS' --prefix='' --name='TurnKey PrestaShop' --country='us' --firstname='Presta' --lastname='Admin' --password='$ADMIN_PASS' --email='$ADMIN_MAIL' --newsletter=0 --send_email=0" www-data
 
@@ -69,10 +69,9 @@ chown www-data:www-data $WEBROOT/robots.txt
 $MYSQL_BATCH --execute "UPDATE $DB_NAME.ps_configuration SET value = '1' WHERE name = 'PS_SSL_ENABLED';"
 
 # stop services
-/etc/init.d/apache2 stop
-/etc/init.d/mysql stop
+service apache2 stop
+service mysql stop
 
 # cleanup
 chown -R root:root $WEBROOT/app
 chown -R www-data:www-data $WEBROOT/app/cache
-

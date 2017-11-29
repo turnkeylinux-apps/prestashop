@@ -1,9 +1,12 @@
 #include <turnkey/base>
 #include <turnkey/lamp>
 
-php5-gd
-php5-mcrypt
-php5-curl
-php5-intl
+php-gd
+php-mcrypt
+php-curl
+php-intl
+php-mbstring
+php-xml
+php-zip
 
 python-bcrypt
