@@ -17,6 +17,10 @@ unzip -q /var/www/prestashop.zip -d $WEBROOT
 rm -f /usr/local/src/prestashop.zip
 rm -f /var/www/prestashop.zip
 
+# Set permissions for normal setup
+find $WEBROOT -type d -exec chmod 755 {} ";"
+find $WEBROOT -type f -exec chmod 644 {} ";"
+
 chown -R root:root $WEBROOT
 chown www-data:www-data $WEBROOT/config
 chown www-data:www-data $WEBROOT/upload
@@ -75,3 +79,5 @@ service mysql stop
 # cleanup
 chown -R root:root $WEBROOT/app
 chown -R www-data:www-data $WEBROOT/app/cache
+chown -R www-data:www-data $WEBROOT/app/logs
+
