@@ -9,7 +9,7 @@ turnkey-prestashop-15.0 (1) turnkey; urgency=low
   * Note: Please refer to turnkey-core's changelog for changes common to all
     appliances. Here we only describe changes specdific to this appliance.
 
- -- Vlad Kuzmenko <vlad.work.here@gmail.com>  Wed, 29 Nov 2017 15:19:42 +0200
+ -- Stefan Davis <stefan@turnkeylinux.org>  Tue, 10 Jul 2018 08:37:22 +1000
 
 turnkey-prestashop-14.2 (1) turnkey; urgency=low
 
