@@ -1,6 +1,15 @@
+turnkey-prestashop-15.1 (1) turnkey; urgency=low
+
+  * Upgraded to the latest upstream source version - v1.7.4.4
+
+  * Rebuild to resolve inadvertent removal of mariadb during sec-updates
+    - part of #1246.
+
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Thu, 22 Nov 2018 14:27:35 +1100
+
 turnkey-prestashop-15.0 (1) turnkey; urgency=low
 
-  * Upgraded to the latest upstream source version
+  * Upgraded to the latest upstream source version - v1.7.4.0
 
   * Improve default permissions - closes #1043
 
