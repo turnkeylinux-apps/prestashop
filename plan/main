@@ -2,7 +2,6 @@
 #include <turnkey/lamp>
 
 php-gd
-php-mcrypt
 php-curl
 php-intl
 php-mbstring
@@ -10,4 +9,4 @@ php-xml
 php-zip
 php-soap
 
-python-bcrypt
+python3-bcrypt

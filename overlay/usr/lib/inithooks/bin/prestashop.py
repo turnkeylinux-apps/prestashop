@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 """Set PrestaShop admin password, email and domain to serve
 
 Option:
@@ -20,9 +20,9 @@ from mysqlconf import MySQL
 
 def usage(s=None):
     if s:
-        print >> sys.stderr, "Error:", s
-    print >> sys.stderr, "Syntax: %s [options]" % sys.argv[0]
-    print >> sys.stderr, __doc__
+        print("Error:", s, file=sys.stderr)
+    print("Syntax: %s [options]" % sys.argv[0], file=sys.stderr)
+    print(__doc__, file=sys.stderr)
     sys.exit(1)
 
 DEFAULT_DOMAIN="www.example.com"
@@ -31,7 +31,7 @@ def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
                                        ['help', 'pass=', 'email=', 'domain='])
-    except getopt.GetoptError, e:
+    except getopt.GetoptError as e:
         usage(e)
 
     email = ""
@@ -79,22 +79,21 @@ def main():
 
     inithooks_cache.write('APP_DOMAIN', domain)
 
-    for line in file('/var/www/prestashop/app/config/parameters.php').readlines():
-        m = re.match(" *'cookie_key' => '(.*)',", line.strip())
-        if m:
-            cookie_key = m.group(1)
+    with open('/var/www/prestashop/app/config/parameters.php', 'r') as fob:
+        for line in fob.readlines():
+            m = re.match(" *'cookie_key' => '(.*)',", line.strip())
+            if m:
+                cookie_key = m.group(1)
 
-    hashpass = bcrypt.hashpw(password, bcrypt.gensalt())
+    hashpass = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
 
     m = MySQL()
-    m.execute('UPDATE prestashop.ps_employee SET email=\"%s\" WHERE id_employee=\"1\";' % email)
-    m.execute('UPDATE prestashop.ps_employee SET passwd=\"%s\" WHERE id_employee=\"1\";' % hashpass)
-    m.execute('UPDATE prestashop.ps_configuration SET value=\"%s\" WHERE name=\"PS_SHOP_DOMAIN\";' % domain)
-    m.execute('UPDATE prestashop.ps_configuration SET value=\"%s\" WHERE name=\"PS_SHOP_DOMAIN_SSL\";' % domain)
-    m.execute('UPDATE prestashop.ps_shop_url SET domain=\"%s\" WHERE id_shop_url=\"1\";' % domain)
-    m.execute('UPDATE prestashop.ps_shop_url SET domain_ssl=\"%s\" WHERE id_shop_url=\"1\";' % domain)
-
-
+    m.execute('UPDATE prestashop.ps_employee SET email=%s WHERE id_employee=\"1\";', (email,))
+    m.execute('UPDATE prestashop.ps_employee SET passwd=%s WHERE id_employee=\"1\";', (hashpass,))
+    m.execute('UPDATE prestashop.ps_configuration SET value=%s WHERE name=\"PS_SHOP_DOMAIN\";', (domain,))
+    m.execute('UPDATE prestashop.ps_configuration SET value=%s WHERE name=\"PS_SHOP_DOMAIN_SSL\";', (domain,))
+    m.execute('UPDATE prestashop.ps_shop_url SET domain=%s WHERE id_shop_url=\"1\";', (domain,))
+    m.execute('UPDATE prestashop.ps_shop_url SET domain_ssl=%s WHERE id_shop_url=\"1\";', (domain,))
 
 if __name__ == "__main__":
     main()
