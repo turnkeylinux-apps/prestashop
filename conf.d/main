@@ -80,4 +80,5 @@ service mysql stop
 
 # cleanup
 chown -R root:root $WEBROOT/app
-
+chown -R www-data:www-data $WEBROOT/app/config
+chown -R www-data:www-data $WEBROOT/app/Resources/translations

@@ -8,5 +8,7 @@ php-mbstring
 php-xml
 php-zip
 php-soap
+php-bcmath
+php-imagick
 
 python3-bcrypt
