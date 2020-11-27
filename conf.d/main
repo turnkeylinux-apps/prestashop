@@ -2,8 +2,7 @@
 
 ADMIN_MAIL=admin@example.com
 ADMIN_PASS=turnkey1
-DOMAIN=www.example.com # set via inithook
-
+DOMAIN=www.example.com # set via inithook 
 DB_NAME=prestashop
 DB_USER=prestashop
 DB_PASS=$(mcookie)
@@ -50,26 +49,11 @@ mv $WEBROOT/admin $WEBROOT/administration
 find $WEBROOT -type d -exec chmod 755 {} ";"
 find $WEBROOT -type f -exec chmod 644 {} ";"
 
-chown -R root:root $WEBROOT
-chown www-data:www-data $WEBROOT/config
-chown www-data:www-data $WEBROOT/upload
-chown www-data:www-data $WEBROOT/download
-
-chown -R www-data:www-data $WEBROOT/cache
-chown -R www-data:www-data $WEBROOT/img
-chown -R www-data:www-data $WEBROOT/mails
-chown -R www-data:www-data $WEBROOT/modules
-chown -R www-data:www-data $WEBROOT/themes
-chown -R www-data:www-data $WEBROOT/translations
-chown -R www-data:www-data $WEBROOT/config/xml
-chown -R www-data:www-data $WEBROOT/var/logs
-chown -R www-data:www-data $WEBROOT/var/cache
-
 # required for friendly urls
 touch $WEBROOT/.htaccess
 touch $WEBROOT/robots.txt
-chown www-data:www-data $WEBROOT/.htaccess
-chown www-data:www-data $WEBROOT/robots.txt
+
+chown -R www-data:www-data $WEBROOT
 
 # enable ssl
 $MYSQL_BATCH --execute "UPDATE $DB_NAME.ps_configuration SET value = '1' WHERE name = 'PS_SSL_ENABLED';"
@@ -77,8 +61,3 @@ $MYSQL_BATCH --execute "UPDATE $DB_NAME.ps_configuration SET value = '1' WHERE n
 # stop services
 service apache2 stop
 service mysql stop
-
-# cleanup
-chown -R root:root $WEBROOT/app
-chown -R www-data:www-data $WEBROOT/app/config
-chown -R www-data:www-data $WEBROOT/app/Resources/translations
