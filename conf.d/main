@@ -34,6 +34,7 @@ $MYSQL_BATCH --execute "grant all privileges on $DB_NAME.* to $DB_USER@localhost
 
 # update apache configuration
 a2dissite 000-default
+a2enmod headers
 a2ensite prestashop
 a2enmod rewrite
 
@@ -44,7 +45,8 @@ su -p -s '/bin/sh' -c "php $WEBROOT/install/index_cli.php --timezone='US/Eastern
 
 rm -rf $WEBROOT/install
 mv $WEBROOT/admin $WEBROOT/administration
-
+cd $WEBROOT
+php ./bin/console prestashop:module install autoupgrade
 # Set permissions for normal setup
 find $WEBROOT -type d -exec chmod 755 {} ";"
 find $WEBROOT -type f -exec chmod 644 {} ";"
@@ -56,7 +58,7 @@ touch $WEBROOT/robots.txt
 chown -R www-data:www-data $WEBROOT
 
 # enable ssl
-$MYSQL_BATCH --execute "UPDATE $DB_NAME.ps_configuration SET value = '1' WHERE name = 'PS_SSL_ENABLED';"
+$MYSQL_BATCH --execute "UPDATE $DB_NAME.configuration SET value = '1' WHERE name = 'PS_SSL_ENABLED';"
 
 # stop services
 service apache2 stop
