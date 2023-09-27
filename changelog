@@ -1,3 +1,9 @@
+turnkey-prestashop-18.0 (1) turnkey; urgency=low
+
+  * Updated to latest upstream source version: 8.1.1.
+
+ -- Stefan Davis <stefan@turnkeylinux.org>  Wed, 27 Sep 2023 22:52:49 +0000
+
 turnkey-prestashop-17.1 (1) turnkey; urgency=low
 
   * Updated all Debian packages to latest.
