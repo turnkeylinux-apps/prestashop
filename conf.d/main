@@ -50,6 +50,7 @@ php ./bin/console prestashop:module install autoupgrade
 # Set permissions for normal setup
 find $WEBROOT -type d -exec chmod 755 {} ";"
 find $WEBROOT -type f -exec chmod 644 {} ";"
+chmod -R +w app/config var/logs cache config download img mails modules override themes translations upload var
 
 # required for friendly urls
 touch $WEBROOT/.htaccess

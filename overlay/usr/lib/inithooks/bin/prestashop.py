@@ -12,8 +12,7 @@ import re
 import sys
 import getopt
 from libinithooks import inithooks_cache
-
-import bcrypt
+import subprocess
 
 from libinithooks.dialog_wrapper import Dialog
 from mysqlconf import MySQL
@@ -85,7 +84,11 @@ def main():
             if m:
                 cookie_key = m.group(1)
 
-    hashpass = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
+    hashpass = subprocess.run([
+        'php', '-r',
+        'echo password_hash($argv[1], PASSWORD_BCRYPT);',
+        '--', password.encode('utf8')
+    ], capture_output=True, check=True).stdout
 
     m = MySQL()
     m.execute('UPDATE prestashop.employee SET email=%s WHERE id_employee=\"1\";', (email,))

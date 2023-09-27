@@ -1,8 +1,8 @@
 #!/bin/bash -ex
 
-VERSION="1.7.8.3"
+VERSION="8.1.1"
 
-URL="http://download.prestashop.com/download/releases/prestashop_${VERSION}.zip"
+URL="https://github.com/PrestaShop/PrestaShop/releases/download/${VERSION}/prestashop_${VERSION}.zip"
 
 [ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
 curl -L -f $PROXY "$URL" -o /usr/local/src/prestashop.zip
