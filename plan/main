@@ -1,14 +1,12 @@
 #include <turnkey/base>
-#include <turnkey/lamp>
+#include <turnkey/lamp81>
 
-php-gd
-php-curl
-php-intl
-php-mbstring
-php-xml
-php-zip
-php-soap
-php-bcmath
-php-imagick
-
-python3-bcrypt
+php8.1-gd
+php8.1-curl
+php8.1-intl
+php8.1-mbstring
+php8.1-xml
+php8.1-zip
+php8.1-soap
+php8.1-bcmath
+php8.1-imagick
