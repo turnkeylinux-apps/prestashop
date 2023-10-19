@@ -1,6 +1,6 @@
 turnkey-prestashop-18.0 (1) turnkey; urgency=low
 
-  * Updated to latest upstream source version: 8.1.1.
+  * Updated to latest upstream source version: 8.1.2.
     [ Stefan Davis <stefan@turnkeylinux.org> ]
 
   * Debian default PHP updated to v8.2.
@@ -70,7 +70,7 @@ turnkey-prestashop-18.0 (1) turnkey; urgency=low
   * Include and enable mod_evasive and mod_security2 by default in Apache.
     [ Stefan Davis <Stefan@turnkeylinux.org> ]
 
- -- Jeremy Davis <jeremy@turnkeylinux.org>  Mon, 16 Oct 2023 03:27:19 +0000
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Thu, 19 Oct 2023 03:18:48 +0000
 
 turnkey-prestashop-17.1 (1) turnkey; urgency=low
 
@@ -303,4 +303,3 @@ turnkey-prestashop-11.1 (1) turnkey; urgency=low
     appliances. Here we only describe changes specific to this appliance.
 
  -- Alon Swartz <alon@turnkeylinux.org>  Sun, 19 Dec 2010 15:01:05 +0200
-
