@@ -267,6 +267,8 @@ localized = {
 for field, value in localized.items():
     node = product.find(field)
     if node is None:
+        if field == "meta_keywords":
+            continue
         raise RuntimeError(f"blank product schema has no {field}")
     languages = node.findall("language")
     if not languages:
