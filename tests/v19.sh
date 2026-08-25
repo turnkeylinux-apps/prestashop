@@ -113,7 +113,7 @@ grep -Eqi 'TurnKey PrestaShop|products|shopping cart' "$page"
 
 # Submit the real Symfony administrator login form with its generated hidden
 # fields, then require an authenticated back-office page.
-curl --insecure --fail --silent --show-error \
+curl --insecure --fail --silent --show-error --location \
     --cookie-jar "$cookies" --cookie "$cookies" \
     "$base/administration/" >"$page"
 grep -Fq 'id="login_form"' "$page"
