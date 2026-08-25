@@ -21,6 +21,7 @@ updater_output=/tmp/tkl-prestashop-updater.$$
 channel_metadata=/tmp/tkl-prestashop-channel.$$
 apt_policy=/tmp/tkl-prestashop-apt-policy.$$
 product_id=
+product_status=
 webservice_id=
 webservice_configured=0
 ws_enabled=
@@ -237,11 +238,12 @@ def set_value(name, value, required=True):
 
 
 values = {
-    "id_manufacturer": "0",
-    "id_supplier": "0",
+    "id_manufacturer": "1",
+    "id_supplier": "1",
     "id_category_default": "2",
     "new": "1",
-    "id_tax_rules_group": "0",
+    "id_tax_rules_group": "1",
+    "type": "1",
     "id_shop_default": "1",
     "reference": "TKL-V19",
     "state": "1",
@@ -249,20 +251,18 @@ values = {
     "price": "19.00",
     "unit_price": "19.00",
     "active": "1",
-    "available_for_order": "1",
-    "show_price": "1",
-    "visibility": "both",
-    "minimal_quantity": "1",
-    "redirect_type": "301-category",
 }
 for field, value in values.items():
-    set_value(field, value, required=field not in {"unit_price", "redirect_type"})
+    set_value(field, value, required=field != "type")
 
 localized = {
     "name": os.environ["TKL_PRODUCT_NAME"],
     "link_rewrite": "turnkey-v19-acceptance-product",
     "description_short": "TurnKey PrestaShop v19 product round trip",
     "description": "TurnKey PrestaShop v19 product round trip",
+    "meta_description": "TurnKey PrestaShop v19 product round trip",
+    "meta_keywords": "turnkey prestashop",
+    "meta_title": os.environ["TKL_PRODUCT_NAME"],
 }
 for field, value in localized.items():
     node = product.find(field)
@@ -283,14 +283,29 @@ if categories is not None:
         category_id = category_nodes[0].find("id")
         if category_id is not None:
             category_id.text = "2"
+associations = product.find("associations")
+if associations is not None:
+    for association in list(associations):
+        if association.tag != "categories":
+            associations.remove(association)
+
+allowed = set(values) | set(localized) | {"associations"}
+for field in list(product):
+    if field.tag not in allowed:
+        product.remove(field)
 
 tree.write(os.environ["TKL_PRODUCT_OUTPUT"], encoding="utf-8", xml_declaration=True)
 PYTHON
 
-curl --insecure --fail-with-body --silent --show-error --user "$api_key:" \
+product_status=$(curl --insecure --silent --show-error --user "$api_key:" \
     --header 'Content-Type: application/xml' \
-    --data-binary "@$product_request" "$base/api/products" \
-    >"$product_response"
+    --data-binary "@$product_request" --output "$product_response" \
+    --write-out '%{http_code}' "$base/api/products")
+if [[ ! $product_status =~ ^2[0-9][0-9]$ ]]; then
+    printf 'product_create_http_status=%s\n' "$product_status" >&2
+    sed -n '1,80p' "$product_response" >&2
+    false
+fi
 product_id=$(python3 - "$product_response" <<'PYTHON'
 import sys
 import xml.etree.ElementTree as ET
