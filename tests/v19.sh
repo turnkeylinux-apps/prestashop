@@ -24,7 +24,7 @@ product_id=
 webservice_id=
 webservice_configured=0
 ws_enabled=
-ws_cgi=
+ws_enabled_exists=
 
 report_error() {
     printf 'test_failure line=%s status=%s\n' "$1" "$2" >&2
@@ -54,9 +54,15 @@ cleanup() {
             >/dev/null 2>&1 || true
     fi
     if [[ $webservice_configured == 1 ]]; then
-        mariadb prestashop --execute \
-            "UPDATE configuration SET value='$ws_enabled' WHERE name='PS_WEBSERVICE'; UPDATE configuration SET value='$ws_cgi' WHERE name='PS_WEBSERVICE_CGI_HOST';" \
-            >/dev/null 2>&1 || true
+        if [[ $ws_enabled_exists == 1 ]]; then
+            mariadb prestashop --execute \
+                "UPDATE configuration SET value='$ws_enabled' WHERE name='PS_WEBSERVICE';" \
+                >/dev/null 2>&1 || true
+        else
+            mariadb prestashop --execute \
+                "DELETE FROM configuration WHERE name='PS_WEBSERVICE';" \
+                >/dev/null 2>&1 || true
+        fi
         clear_app_cache >/dev/null 2>&1 || true
     fi
     rm -f -- "$cookies" "$page" "$headers" "$form_body" \
@@ -184,14 +190,21 @@ grep -Eqi 'Dashboard|main-menu|logout' "$page"
 
 # Enable a disposable key for PrestaShop's supported Webservice API. The key
 # and configuration are removed by the exit trap.
-ws_enabled=$(db_scalar "SELECT value FROM configuration WHERE name='PS_WEBSERVICE' LIMIT 1")
-ws_cgi=$(db_scalar "SELECT value FROM configuration WHERE name='PS_WEBSERVICE_CGI_HOST' LIMIT 1")
-test -n "$ws_enabled"
-test -n "$ws_cgi"
+ws_enabled_exists=$(db_scalar "SELECT COUNT(*) FROM configuration WHERE name='PS_WEBSERVICE'")
+[[ $ws_enabled_exists =~ ^[01]$ ]]
+if [[ $ws_enabled_exists == 1 ]]; then
+    ws_enabled=$(db_scalar "SELECT value FROM configuration WHERE name='PS_WEBSERVICE' LIMIT 1")
+    test -n "$ws_enabled"
+fi
 api_key=$(printf '%032d' "$$")
-mariadb prestashop --execute \
-    "UPDATE configuration SET value='1' WHERE name IN ('PS_WEBSERVICE','PS_WEBSERVICE_CGI_HOST');"
 webservice_configured=1
+if [[ $ws_enabled_exists == 1 ]]; then
+    mariadb prestashop --execute \
+        "UPDATE configuration SET value='1' WHERE name='PS_WEBSERVICE';"
+else
+    mariadb prestashop --execute \
+        "INSERT INTO configuration (id_shop_group,id_shop,name,value,date_add,date_upd) VALUES (NULL,NULL,'PS_WEBSERVICE','1',NOW(),NOW());"
+fi
 webservice_id=$(mariadb --batch --skip-column-names prestashop --execute \
     "INSERT INTO webservice_account (\`key\`, description, class_name, is_module, active) VALUES ('$api_key', 'TurnKey v19 disposable acceptance', 'WebserviceRequest', 0, 1); SELECT LAST_INSERT_ID();" | tail -n1)
 [[ $webservice_id =~ ^[1-9][0-9]*$ ]]
