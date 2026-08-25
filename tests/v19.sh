@@ -99,6 +99,13 @@ test "$(db_scalar "SELECT value FROM configuration WHERE name='PS_SHOP_DOMAIN' L
     localhost
 test "$(db_scalar "SELECT value FROM configuration WHERE name='PS_SHOP_DOMAIN_SSL' LIMIT 1")" = \
     localhost
+php -r '
+    require "$argv[1]/vendor/autoload.php";
+    $parameters = require "$argv[1]/app/config/parameters.php";
+    Defuse\Crypto\Key::loadFromAsciiSafeString(
+        $parameters["parameters"]["new_cookie_key"]
+    );
+' -- "$webroot"
 
 # Prove the public storefront through the configured Apache TLS endpoint.
 curl --insecure --fail --silent --show-error --location "$base/" >"$page"
