@@ -8,7 +8,6 @@ Option:
                 DEFAULT=www.example.com
 
 """
-import re
 import sys
 import getopt
 from libinithooks import inithooks_cache
@@ -78,12 +77,6 @@ def main():
 
     inithooks_cache.write('APP_DOMAIN', domain)
 
-    with open('/var/www/prestashop/app/config/parameters.php', 'r') as fob:
-        for line in fob.readlines():
-            m = re.match(" *'cookie_key' => '(.*)',", line.strip())
-            if m:
-                cookie_key = m.group(1)
-
     hashpass = subprocess.run([
         'php', '-r',
         'echo password_hash($argv[1], PASSWORD_BCRYPT);',
@@ -100,4 +93,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -1,3 +1,18 @@
+turnkey-prestashop-19.0 (1) turnkey; urgency=low
+
+  * Update to the supported upstream PrestaShop 9.1.5 security release.
+
+  * Install the official Update Assistant 7.6.5 release.
+
+  * Verify both official upstream archives with pinned SHA-256 digests.
+
+  * Support Debian 13/Trixie, including PHP 8.4 and MariaDB 11.8.
+
+  * Update firstboot secret and administrator password handling for
+    PrestaShop 9.
+
+ -- TurnKey Linux Developers <admin@turnkeylinux.org>  Tue, 25 Aug 2026 12:00:00 +0000
+
 turnkey-prestashop-18.0 (1) turnkey; urgency=low
 
   * Ensure hashfile includes URL to public key - closes #1864.

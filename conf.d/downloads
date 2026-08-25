@@ -1,9 +1,28 @@
 #!/bin/bash -ex
 
-VERSION=$(gh_releases PrestaShop/PrestaShop | grep -vi 'beta\|rc' | sort -V | tail -1)
+PRESTASHOP_VERSION=9.1.5
+PRESTASHOP_EDITION=5.0
+PRESTASHOP_ARCHIVE=prestashop-classic-${PRESTASHOP_VERSION}-${PRESTASHOP_EDITION}.zip
+PRESTASHOP_URL=https://assets.prestashop3.com/dst/edition/corporate/${PRESTASHOP_VERSION}-${PRESTASHOP_EDITION}/prestashop_edition_classic_version_${PRESTASHOP_VERSION}-${PRESTASHOP_EDITION}.zip
+PRESTASHOP_SHA256=37140cb77c03acf61b832f76893cd8fe1e304b0fc14fa5485cfea4a7bfaf3a72
 
-URL="https://github.com/PrestaShop/PrestaShop/releases/download/${VERSION}/prestashop_${VERSION}.zip"
+AUTOUPGRADE_VERSION=7.6.5
+AUTOUPGRADE_ARCHIVE=autoupgrade-v${AUTOUPGRADE_VERSION}.zip
+AUTOUPGRADE_URL=https://github.com/PrestaShop/autoupgrade/releases/download/v${AUTOUPGRADE_VERSION}/${AUTOUPGRADE_ARCHIVE}
+AUTOUPGRADE_SHA256=8cbf4b8b615bceef4710bb95708099fc5f2f64671c8196f475c87a76d6f7a2e1
 
-[ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
-curl -L -f $PROXY "$URL" -o /usr/local/src/prestashop.zip
+proxy=()
+if [ -n "$FAB_HTTP_PROXY" ]; then
+    proxy=(--proxy "$FAB_HTTP_PROXY")
+fi
 
+cd /usr/local/src
+curl --fail --location --silent --show-error "${proxy[@]}" \
+    --output "$PRESTASHOP_ARCHIVE" "$PRESTASHOP_URL"
+printf '%s  %s\n' "$PRESTASHOP_SHA256" "$PRESTASHOP_ARCHIVE" | \
+    sha256sum --check --strict
+
+curl --fail --location --silent --show-error "${proxy[@]}" \
+    --output "$AUTOUPGRADE_ARCHIVE" "$AUTOUPGRADE_URL"
+printf '%s  %s\n' "$AUTOUPGRADE_SHA256" "$AUTOUPGRADE_ARCHIVE" | \
+    sha256sum --check --strict
