@@ -359,7 +359,7 @@ grep -qi Logout "$page"
 before_version=$(php -r \
     "require '$webroot/vendor/autoload.php'; echo PrestaShop\\PrestaShop\\Core\\Version::VERSION;")
 su -p -s /bin/sh -c \
-    'php modules/autoupgrade/bin/console update:check-new-version administration --no-ansi' \
+    'php /var/www/prestashop/modules/autoupgrade/bin/console update:check-new-version administration --no-ansi' \
     www-data >"$updater_output"
 grep -Fq 'Version' "$updater_output"
 grep -Fq 'Channel' "$updater_output"
