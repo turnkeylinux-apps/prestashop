@@ -16,9 +16,10 @@ and on top of that:
    - Administration link set to: https://$your_domain/administration
    - Optimized SEO URL's enabled by default.
 
-   **Security note**: Updates to Prestashop may require supervision so
-   they **ARE NOT** configured to install automatically. See `Prestashop
-   documentation`_ for upgrading.   
+   **Security note**: PrestaShop updates require supervision. The included
+   Update Assistant checks the supported online channel and can perform an
+   update after the administrator takes a backup. See `PrestaShop update
+   documentation`_ for the supported web and command-line workflows.
 
 -  SSL support out of the box.
 - `Adminer`_ administration frontend for MySQL (listening on port
@@ -39,6 +40,6 @@ Credentials *(passwords set at first boot)*
 
 .. _PrestaShop: https://www.prestashop.com/
 .. _TurnKey Core: https://www.turnkeylinux.org/core
-.. _Prestashop documentation: http://doc.prestashop.com/display/PS16/Updating+PrestaShop
+.. _PrestaShop update documentation: https://devdocs.prestashop-project.org/9/basics/keeping-up-to-date/
 .. _Adminer: https://www.adminer.org/
 .. _Prestashop Blog: https://www.prestashop.com/en/blog
