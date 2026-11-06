@@ -46,8 +46,13 @@ and complete its requirements check, backup and update steps. Verify the store
 and enable it again after the update succeeds.
 
 If product images are missing after changing the shop domain, refresh generated
-URLs from the server console::
+URLs from the server console. On older images, first install the helper from
+this corrective source checkout (the updated appliance is pending publication).
+Run these commands as root from the checkout directory::
 
+    install -o root -g root -m 0755 \
+        overlay/usr/local/bin/turnkey-prestashop-refresh-urls \
+        /usr/local/bin/turnkey-prestashop-refresh-urls
     runuser -u www-data -- turnkey-prestashop-refresh-urls
 
 This also repairs malformed default Customer Reassurance icon URLs and preserves
