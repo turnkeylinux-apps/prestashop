@@ -88,6 +88,9 @@ $MYSQL_BATCH --execute "UPDATE $DB_NAME.configuration SET value = '1' WHERE name
 
 su -p -s /bin/sh -c 'php ./bin/console cache:clear --no-warmup --env=prod' www-data
 
+# Finalize the installed shop after SSL and domain configuration.
+runuser -u www-data -- /usr/local/bin/turnkey-prestashop-refresh-urls
+
 # stop services
 service apache2 stop
 service mysql stop

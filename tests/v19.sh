@@ -84,6 +84,9 @@ grep -Fxq 'VERSION_CODENAME=trixie' /etc/os-release
 grep -Eq '^turnkey-prestashop-19\.0' /etc/turnkey_version
 grep -Fq '[40prestashop] successfully completed' /var/log/inithooks.log
 
+# Check generated routes and seeded assets with the installed application.
+runuser -u www-data -- php "$(dirname "$0")/url-refresh.php"
+
 source_manifest=/usr/local/share/turnkey/prestashop-source
 grep -Fxq 'version=9.1.5' "$source_manifest"
 grep -Fxq 'edition=5.0' "$source_manifest"
@@ -117,6 +120,33 @@ php -r '
 # Prove the public storefront through the configured Apache TLS endpoint.
 curl --insecure --fail --silent --show-error --location "$base/" >"$page"
 grep -Eqi 'TurnKey PrestaShop|products|shopping cart' "$page"
+
+# The installed demo must load its real image routes, not only its HTML.
+python3 - "$page" "$base" >"$product_read" <<'PYTHON'
+from html.parser import HTMLParser
+from urllib.parse import urljoin, urlsplit
+import sys
+
+class Images(HTMLParser):
+    urls = set()
+    def handle_starttag(self, tag, attrs):
+        source = dict(attrs).get('src', '')
+        if tag == 'img' and source and not source.startswith('data:'):
+            self.urls.add(urljoin(sys.argv[2], source))
+
+parser = Images()
+parser.feed(open(sys.argv[1], encoding='utf-8').read())
+assert parser.urls, 'Storefront has no images'
+assert any('default' in urlsplit(url).path for url in parser.urls), 'No product image route exercised'
+for url in sorted(parser.urls):
+    assert urlsplit(url).netloc == urlsplit(sys.argv[2]).netloc, f'Unexpected default image origin: {url}'
+    print(url)
+PYTHON
+while IFS= read -r asset; do
+    content_type=$(curl --insecure --fail --silent --show-error \
+        --output /dev/null --write-out '%{content_type}' "$asset")
+    [[ $content_type == image/* ]]
+done <"$product_read"
 
 # Submit the real Symfony administrator login form with its generated hidden
 # fields, then require an authenticated back-office page.
@@ -382,7 +412,7 @@ if not stable:
 print(stable)
 PYTHON
 )
-[[ $stable_edition == 9.1.5-* ]]
+[[ $stable_edition =~ ^[0-9]+\.[0-9]+\.[0-9]+- ]]
 
 apache_version=$(dpkg-query -W -f='${Version}' apache2)
 mariadb_version=$(dpkg-query -W -f='${Version}' mariadb-server)

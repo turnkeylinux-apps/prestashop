@@ -28,6 +28,24 @@ and on top of that:
    web applications (e.g., password recovery)
 -  Webmin modules for configuring Apache2, PHP, MySQL and Postfix.
 
+Updating the store
+------------------
+
+Back up the shop files and database before updating. In the back office, open
+**Shop Parameters > General > Maintenance**, set **Enable store** to **No**,
+click **Add my IP**, and **Save**. Update Assistant requires the maintenance IP
+even when the store allows access for logged-in employees. Open Update Assistant
+and complete its requirements check, backup and update steps. Verify the store
+and enable it again after the update succeeds.
+
+If product images are missing after changing the shop domain, refresh generated
+URLs from the server console::
+
+    runuser -u www-data -- turnkey-prestashop-refresh-urls
+
+This also repairs malformed default Customer Reassurance icon URLs and preserves
+customized icons. The firstboot setup runs it automatically.
+
 For Prestashop news and updates, including security updates, we
 recommend that you subscribe to the `Prestashop Blog`_.
 

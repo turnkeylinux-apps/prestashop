@@ -1,0 +1,26 @@
+#!/usr/bin/php
+<?php
+// Refresh generated URLs after configuring the shop domain. Run as www-data.
+require '/var/www/prestashop/config/config.inc.php';
+
+if (Module::isInstalled('blockreassurance')) {
+    $path = 'modules/blockreassurance/views/img/reassurance/pack2/';
+    $base = rtrim(__PS_BASE_URI__, '/') . '/';
+    foreach (['security.svg', 'carrier.svg', 'parcel.svg'] as $name) {
+        // The CLI installer seeded protocol-relative URLs without a host.
+        // Limit repair to these defaults and leave customized icons alone.
+        $where = "icon = '" . pSQL('//' . $path . $name)
+            . "' AND (custom_icon IS NULL OR custom_icon = '')";
+        if (!Db::getInstance()->update('psreassurance',
+                ['icon' => $base . $path . $name], $where)) {
+            fwrite(STDERR, "Could not repair the default reassurance icons.\n");
+            exit(1);
+        }
+    }
+}
+
+if (!Tools::generateHtaccess()) {
+    fwrite(STDERR, "Could not regenerate PrestaShop .htaccess. Check its permissions.\n");
+    exit(1);
+}
+echo "PrestaShop image routes and default icon URLs refreshed.\n";

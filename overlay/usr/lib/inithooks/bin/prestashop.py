@@ -91,5 +91,10 @@ def main():
     m.execute('UPDATE prestashop.shop_url SET domain=%s WHERE id_shop_url=\"1\";', (domain,))
     m.execute('UPDATE prestashop.shop_url SET domain_ssl=%s WHERE id_shop_url=\"1\";', (domain,))
 
+    subprocess.run([
+        "runuser", "-u", "www-data", "--",
+        "/usr/local/bin/turnkey-prestashop-refresh-urls",
+    ], check=True)
+
 if __name__ == "__main__":
     main()
