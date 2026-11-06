@@ -1,3 +1,17 @@
+turnkey-prestashop-19.0 (2) turnkey; urgency=medium
+
+  * Refresh image rewrite rules after firstboot domain configuration.
+
+  * Repair malformed bundled reassurance icon URLs while preserving custom icons.
+
+  * Seed the canonical America/New_York timezone supported by Debian Trixie.
+
+  * Update Assistant 7.6.6 supports the complete PrestaShop 9.2 migration.
+
+  * Document maintenance-IP and updater prerequisites and exercise real image URLs.
+
+ -- Liraz Siri <liraz@liraz.org>  Fri, 06 Nov 2026 10:50:00 +0000
+
 turnkey-prestashop-19.0 (1) turnkey; urgency=low
 
   * Update to the supported upstream PrestaShop 9.1.5 security release.

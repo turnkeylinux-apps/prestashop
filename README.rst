@@ -35,7 +35,10 @@ canonical timezone) so PHP can use it correctly.
 Updating the store
 ------------------
 
-Back up the shop files and database before updating. In the back office, open
+Back up the shop files and database before updating. Update the Update Assistant
+module first; version 7.6.6 or newer is required for PrestaShop 9.2. If Module
+Manager does not offer it, upload the official `Update Assistant releases`_ ZIP
+through **Modules > Module Manager > Upload a module**. In the back office, open
 **Shop Parameters > General > Maintenance**, set **Enable store** to **No**,
 click **Add my IP**, and **Save**. Update Assistant requires the maintenance IP
 even when the store allows access for logged-in employees. Open Update Assistant
@@ -65,3 +68,5 @@ Credentials *(passwords set at first boot)*
 .. _PrestaShop update documentation: https://devdocs.prestashop-project.org/9/basics/keeping-up-to-date/
 .. _Adminer: https://www.adminer.org/
 .. _Prestashop Blog: https://www.prestashop.com/en/blog
+
+.. _Update Assistant releases: https://github.com/PrestaShop/autoupgrade/releases
