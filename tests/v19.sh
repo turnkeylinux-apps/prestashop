@@ -117,6 +117,14 @@ php -r '
     );
 ' -- "$webroot"
 
+# Debian Trixie does not ship legacy tzdata aliases in its default runtime.
+php -r '
+    require "/var/www/prestashop/config/config.inc.php";
+    if (!date_default_timezone_set(Configuration::get("PS_TIMEZONE"))) {
+        exit(1);
+    }
+'
+
 # Prove the public storefront through the configured Apache TLS endpoint.
 curl --insecure --fail --silent --show-error --location "$base/" >"$page"
 grep -Eqi 'TurnKey PrestaShop|products|shopping cart' "$page"

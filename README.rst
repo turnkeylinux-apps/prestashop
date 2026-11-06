@@ -1,11 +1,9 @@
 PrestaShop - Easy to use online shop
 ====================================
 
-`PrestaShop`_ is a popular, easy to use e-commerce solution for small to
-medium-sized online shops. Features include support for 38 languages,
-special deals and promotions, cross-selling, affiliate programs. The
-open source edition supports payment gateways such as Google checkout,
-and PayPal with further payment modules offered commercially.
+`PrestaShop`_ is an open source e-commerce application for managing products,
+customers and orders. Configure payment and shipping options in the back office,
+with additional integrations supplied by modules.
 
 This appliance includes all the standard features in `TurnKey Core`_,
 and on top of that:
@@ -27,6 +25,12 @@ and on top of that:
 -  Postfix MTA (bound to localhost) to allow sending of email from
    web applications (e.g., password recovery)
 -  Webmin modules for configuring Apache2, PHP, MySQL and Postfix.
+
+Before accepting orders, configure your store identity and contact details,
+shipping, taxes, payment methods and the Customer Reassurance policies. Choose
+your timezone under **International > Localization**. On older v19 images,
+replace the default **US/Eastern** with **America/New_York** (or your local
+canonical timezone) so PHP can use it correctly.
 
 Updating the store
 ------------------
