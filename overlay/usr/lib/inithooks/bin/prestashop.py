@@ -98,9 +98,9 @@ def main():
     ], check=True)
 
     pending_mail = Path('/usr/local/share/turnkey/prestashop-mail-needs-domain')
-    if pending_mail.exists():
-        # The factory installer renders mail with its placeholder domain.
-        # Use PrestaShop's generator once, after assigning the real hostname.
+    if pending_mail.exists() and domain != DEFAULT_DOMAIN:
+        # Headless fallback setup still uses the factory placeholder domain.
+        # Keep the marker until setup assigns a real hostname, then generate once.
         # Later setup runs must preserve merchant mail customizations.
         m.execute('UPDATE prestashop.configuration SET value=%s WHERE name="PS_SHOP_EMAIL";', (email,))
         subprocess.run([
