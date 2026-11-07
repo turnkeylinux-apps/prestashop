@@ -10,6 +10,7 @@ Option:
 """
 import sys
 import getopt
+from pathlib import Path
 from libinithooks import inithooks_cache
 import subprocess
 
@@ -95,6 +96,20 @@ def main():
         "runuser", "-u", "www-data", "--",
         "/usr/local/bin/turnkey-prestashop-refresh-urls",
     ], check=True)
+
+    pending_mail = Path('/usr/local/share/turnkey/prestashop-mail-needs-domain')
+    if pending_mail.exists():
+        # The factory installer renders mail with its placeholder domain.
+        # Use PrestaShop's generator once, after assigning the real hostname.
+        # Later setup runs must preserve merchant mail customizations.
+        m.execute('UPDATE prestashop.configuration SET value=%s WHERE name="PS_SHOP_EMAIL";', (email,))
+        subprocess.run([
+            'runuser', '-u', 'www-data', '--',
+            'php', '/var/www/prestashop/bin/console',
+            'prestashop:mail:generate', 'modern', 'en', '--overwrite',
+            '--env=prod', '--no-debug', '--no-interaction',
+        ], cwd='/var/www/prestashop', check=True)
+        pending_mail.unlink()
 
 if __name__ == "__main__":
     main()

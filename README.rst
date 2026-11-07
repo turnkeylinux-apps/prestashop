@@ -32,6 +32,11 @@ your timezone under **International > Localization**. On older v19 images,
 replace the default **US/Eastern** with **America/New_York** (or your local
 canonical timezone) so PHP can use it correctly.
 
+Initial setup uses your email address for the administrator and store
+notifications, and generates the factory email templates for your HTTPS domain.
+You can then customize your store's contact details and email theme in the back
+office. Later setup runs preserve those mail customizations.
+
 Updating the store
 ------------------
 

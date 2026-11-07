@@ -91,6 +91,11 @@ su -p -s /bin/sh -c 'php ./bin/console cache:clear --no-warmup --env=prod' www-d
 # Finalize the installed shop after SSL and domain configuration.
 runuser -u www-data -- /usr/local/bin/turnkey-prestashop-refresh-urls
 
+# Render the factory mail theme again after firstboot sets the real domain.
+# Keep this state outside the application so subsequent setup runs preserve
+# merchant-customized templates and notification settings.
+touch /usr/local/share/turnkey/prestashop-mail-needs-domain
+
 # stop services
 service apache2 stop
 service mysql stop
