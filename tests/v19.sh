@@ -280,11 +280,11 @@ def set_value(name, value, required=True):
     node.text = value
 
 
+# Computed read-only fields such as "new" are omitted from the POST schema.
 values = {
     "id_manufacturer": "1",
     "id_supplier": "1",
     "id_category_default": "2",
-    "new": "1",
     "id_tax_rules_group": "1",
     "type": "1",
     "id_shop_default": "1",
