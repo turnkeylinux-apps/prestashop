@@ -5,8 +5,9 @@ umask 077
 result=${TKL_TEST_RESULT:?TKL_TEST_RESULT is required}
 app_password=${TKL_TEST_APP_PASS:?TKL_TEST_APP_PASS is required}
 db_password=${TKL_TEST_DB_PASS:?TKL_TEST_DB_PASS is required}
-base=https://localhost
-admin_email=admin@example.invalid
+app_domain=${TKL_TEST_APP_DOMAIN:-localhost}
+base=https://$app_domain
+admin_email=${TKL_TEST_APP_EMAIL:-admin@example.invalid}
 webroot=/var/www/prestashop
 cookies=/tmp/tkl-prestashop-cookies.$$
 page=/tmp/tkl-prestashop-page.$$
@@ -106,9 +107,9 @@ test "$autoupgrade_version" = 7.6.6
 test "$(db_scalar "SELECT email FROM employee WHERE id_employee=1")" = \
     "$admin_email"
 test "$(db_scalar "SELECT value FROM configuration WHERE name='PS_SHOP_DOMAIN' LIMIT 1")" = \
-    localhost
+    "$app_domain"
 test "$(db_scalar "SELECT value FROM configuration WHERE name='PS_SHOP_DOMAIN_SSL' LIMIT 1")" = \
-    localhost
+    "$app_domain"
 php -r '
     require "$argv[1]/vendor/autoload.php";
     $parameters = require "$argv[1]/app/config/parameters.php";
