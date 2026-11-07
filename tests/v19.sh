@@ -89,15 +89,15 @@ grep -Fq '[40prestashop] successfully completed' /var/log/inithooks.log
 runuser -u www-data -- php "$(dirname "$0")/url-refresh.php"
 
 source_manifest=/usr/local/share/turnkey/prestashop-source
-grep -Fxq 'version=9.1.5' "$source_manifest"
-grep -Fxq 'edition=5.0' "$source_manifest"
-grep -Fxq 'archive_sha256=37140cb77c03acf61b832f76893cd8fe1e304b0fc14fa5485cfea4a7bfaf3a72' "$source_manifest"
+grep -Fxq 'version=9.2.0' "$source_manifest"
+grep -Fxq 'edition=6.0' "$source_manifest"
+grep -Fxq 'archive_sha256=81e1719181c4ebe29d54c7e914bc571f1883dd4cfd216f5b28bd30af5757105f' "$source_manifest"
 grep -Fxq 'autoupgrade_version=7.6.6' "$source_manifest"
 grep -Fxq 'autoupgrade_sha256=5a0fc646a487f764355cf9a5dc990827dc692ac3c98493395c7e7360913177a8' "$source_manifest"
 
 installed_version=$(php -r \
     "require '$webroot/vendor/autoload.php'; echo PrestaShop\\PrestaShop\\Core\\Version::VERSION;")
-test "$installed_version" = 9.1.5
+test "$installed_version" = 9.2.0
 php_version=$(php -r 'echo PHP_VERSION;')
 [[ $php_version == 8.4.* ]]
 # The 100-row combinations editor submits more than PHP's 1000-field default.
