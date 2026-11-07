@@ -100,6 +100,10 @@ installed_version=$(php -r \
 test "$installed_version" = 9.1.5
 php_version=$(php -r 'echo PHP_VERSION;')
 [[ $php_version == 8.4.* ]]
+# The 100-row combinations editor submits more than PHP's 1000-field default.
+php -r 'exit((int) ini_get("max_input_vars") >= 2000 ? 0 : 1);'
+grep -Eq '^max_input_vars[[:space:]]*=[[:space:]]*2000([[:space:];]|$)' \
+    /etc/php/8.4/apache2/php.ini
 autoupgrade_version=$(php -r \
     '$config=simplexml_load_file($argv[1]); echo (string) $config->version;' \
     "$webroot/modules/autoupgrade/config.xml")
